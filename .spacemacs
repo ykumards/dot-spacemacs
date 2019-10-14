@@ -21,6 +21,7 @@ values."
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
    dotspacemacs-enable-lazy-installation 'unused
+
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
    dotspacemacs-ask-for-lazy-installation t
@@ -37,17 +38,13 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     rust
-     yaml
-     csv
-     python
      auto-completion
      better-defaults
-     evil-commentary
      emacs-lisp
      git
      markdown
      org
+     smex
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -59,7 +56,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-journal deft sublimity)
+   dotspacemacs-additional-packages '()
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -88,6 +85,7 @@ values."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
+
    dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
@@ -122,7 +120,7 @@ values."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 3)
+   dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
@@ -131,19 +129,17 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(
-                         atom-one-dark
-                         solarized-light
-                         )
+   dotspacemacs-themes '(atom-one-dark
+                         spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 16
+   dotspacemacs-default-font '("Fira Code"
+                               :size 17
                                :weight normal
                                :width normal
-                               :powerline-scale 1.0)
+                               :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -257,26 +253,26 @@ values."
    ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
    ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
    ;; This variable can also be set to a property list for finer control:
-   ;;'(:relative t)
-     ;; :disabled-for-modes dired-mode
-     ;;                     doc-view-mode
-     ;;                     markdown-mode
-     ;;                     org-mode
-     ;;                     pdf-view-mode
-     ;;                     text-mode
-     ;; :size-limit-kb 1000)
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode t
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
-   dotspacemacs-smart-closing-parenthesis nil
+   dotspacemacs-smart-closing-parenthesis t
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -307,41 +303,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  ;;; scroll one line at a time (less "jumpy" than defaults)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; two lines at a time
-  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-  ;;( setq smooth-scroll/vscroll-step-size 5) ;; Set the speed right
-  (setq mac-command-modifier 'control)
-  (setq org-journal-dir "~/Work/ORG/journal/")
-  (setq org-journal-enable-encryption t)
+  ;; disable package signature checking
+  package-check-signature nil
 
-  ;; Custom Key Bindings
-  (global-set-key (kbd "C-q") 'org-agenda)
-  (global-set-key (kbd "C-c d") 'calendar)
-
-  ;; Indent tabs with spaces
-  (setq-default indent-tabs-mode nil)
-  (setq tab-width 2)
-
-  ;; Encrypting
-  (setq epa-file-select-keys 2)
-
-  ;; Let Emacs cache the password during session
-  (setq epa-file-cache-passphrase-for-symmetric-encryption t)
-  ;; Remove beeps
-  (setq visible-bell t)
-  (setq locate-command "mdfind")  ;; Use Mac OS X's Spotlight
-  (global-set-key (kbd "C-c f l") 'locate)
-  ;;(org-decrypt-entry "~/Dropbox/ORG/planner/work.org")
-
-  ;; Deft cutomization
-  (setq deft-extensions '("txt" "tex" "org"))
-  (setq deft-directory "~/Work/ORG/notes")
-  (setq deft-recursive t)
-  (global-set-key (kbd "C-x C-g") 'deft-find-file)
-  (global-set-key (kbd "C-c k") 'deft)
-  (setq deft-use-filename-as-title t)
   )
 
 (defun dotspacemacs/user-config ()
@@ -351,60 +315,180 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (require 'org-crypt)
-  (org-crypt-use-before-save-magic)
-  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  ;; GPG key to use for encryption
-  ;; Either the Key ID or set to nil to use symmetric encryption.
-  (setq org-crypt-key "6A7C0B40")
+    ;; Org mode keybindings
+  (global-set-key (kbd "C-q") 'org-agenda)
+  (global-set-key (kbd "C-c d") 'calendar)
 
-  (setq org-agenda-files (list "~/Work/ORG/planner/"
-                               "~/Work/ORG/gtd.org"
-                               "~/Work/ORG/journal/"))
-  (setq org-deadline-warning-days 1)
-  (setq org-agenda-span 'day)
-  (setq auto-save-default nil)
+  ;; Shows a list of buffers
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+  ;; Enhances M-x to allow easier execution of commands. Provides
+  ;; a filterable list of possible commands in the minibuffer
+  ;; http://www.emacswiki.org/emacs/Smex
+  (setq smex-save-file (concat user-emacs-directory ".smex-items"))
+  (smex-initialize)
+  (global-set-key (kbd "M-x") 'smex)
+
+  (projectile-global-mode)
+
+
+  ;;;;;;;;;;;;;;;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Highlights matching parenthesis
+  (show-paren-mode 1)
+
+  ;; Highlight current line
+  (global-hl-line-mode 1)
+
+  ;; Interactive search key bindings. By default, C-s runs
+  ;; isearch-forward, so this swaps the bindings.
+  (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+  (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+  (global-set-key (kbd "C-M-s") 'isearch-forward)
+  (global-set-key (kbd "C-M-r") 'isearch-backward)
+
+
+  ;; Don't use hard tabs
+  (setq-default indent-tabs-mode nil)
+
+  ;; Enable word wrap
+  (setq-default word-wrap t)
+
+  (defun move-line-up ()
+    "Move up the current line."
+    (interactive)
+    (transpose-lines 1)
+    (forward-line -2)
+    (indent-according-to-mode))
+
+  (defun move-line-down ()
+    "Move down the current line."
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+  (global-set-key [(meta shift up)]  'move-line-up)
+  (global-set-key [(meta shift down)]  'move-line-down)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG Mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (setq org-agenda-files (list "~/Dropbox/Work/org/"
+                               "~/Dropbox/Work/org/research/"
+                               "~/Dropbox/Work/org/work-diary/"))
+
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cb" 'org-iswitchb)
+
+  (setq org-indent-mode t)
+  (setq org-startup-with-inline-images t)
+  ;; bullets
+  (add-hook 'org-mode-hook 'org-bullets-mode)
+
   (setq org-todo-keywords
-        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)"))))
 
-  (defun get-journal-file-today ()
-    "Return filename for today's journal entry."
-    (let ((daily-name (format-time-string "%Y%m%d")))
-      (expand-file-name (concat org-journal-dir daily-name))))
+  ;; Handling refiling
+  ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+  (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                   (org-agenda-files :maxlevel . 9))))
+                                        ; Use full outline paths for refile targets - we file directly with IDO
+  (setq org-refile-use-outline-path t)
 
-  (defun journal-file-today ()
-    "Create and load a journal file based on today's date."
-    (interactive)
-    (find-file (get-journal-file-today)))
+                                        ; Targets complete directly with IDO
+  (setq org-outline-path-complete-in-steps nil)
 
-  (global-set-key (kbd "C-c f j") 'journal-file-today)
+                                        ; Allow refile to create parent tasks with confirmation
+  (setq org-refile-allow-creating-parent-nodes (quote confirm))
 
-  (defun get-journal-file-yesterday ()
-    "Return filename for yesterday's journal entry."
-    (let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
-           (daily-name (format-time-string "%Y%m%d" yesterday)))
-      (expand-file-name (concat org-journal-dir daily-name))))
+  ;; Lets use helm not IDO
+  (setq org-completion-use-ido nil)
+  (setq ido-everywhere nil)
+  (setq ido-max-directory-size 100000)
+  (ido-mode (quote both))
+                                        ; Use the current window when visiting files and buffers with ido
+  (setq ido-default-file-method 'selected-window)
+  (setq ido-default-buffer-method 'selected-window)
+                                        ; Use the current window for indirect buffer display
+  (setq org-indirect-buffer-display 'current-window)
 
-  (defun journal-file-yesterday ()
-    "Creates and load a file based on yesterday's date."
-    (interactive)
-    (find-file (get-journal-file-yesterday)))
+  ;;Refile settings
+                                        ; Exclude DONE state tasks from refile targets
+  (defun bh/verify-refile-target ()
+    "Exclude todo keywords with a done state from refile targets"
+    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
 
-  (global-set-key (kbd "C-c f y") 'journal-file-yesterday)
+  (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
+  ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline "~/Work/ORG/refile.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
-          ("n" "Notes" entry (file+datetree "~/Work/ORG/notes/inbox.org")
-           "* %?\nEntered on %U\n  %i\n  %a")
-          ("j" "Journal Entry"
-           entry (file+datetree "~/Work/ORG/journal/journal.org")
-           "* %?"
-           :empty-lines 1)
-          ("d" "Dump" entry (file+datetree "~/Work/ORG/dump.org")
-           "* %?\nEntered on %U\n %i\n %a"))
-  )
+        (quote (("t" "todo" entry (file "~/Dropbox/Work/org/refile.org")
+                 "* TODO %?\n%U\n%a\n")
+                ("j" "Journal Entry"
+                 entry (file+datetree "~/Dropbox/Work/org/journal.org")
+                 "* %?"
+                 :empty-lines 1)
+                ("n" "note" entry (file "~/Dropbox/Work/org/refile.org")
+                 "* %? :NOTE:\n%U\n%a\n"))))
+
+  (setq org-startup-indented t)
+  (setq org-deadline-warning-days 1)
+  ;; Deft shortcuts
+  (setq deft-extensions '("org"))
+  (setq deft-directory "~/Dropbox/Work/org/notes")
+  (setq deft-recursive t)
+  (global-set-key "\C-cd" 'deft)
+  (setq deft-use-filename-as-title t)
+  (setq deft-use-filter-string-for-filename t)
+  (setq deft-file-naming-rules
+        '((noslash . "-")
+          (nospace . "-")
+          (case-fn . downcase)))
+  (global-set-key (kbd "C-x C-g") 'deft-find-file)
+
+  (global-set-key (kbd "C-c r")
+                  (lambda () (interactive) (find-file "~/Dropbox/Work/org/refile.org")))
+
+  ;;;;;;;;;;;;;;;;;;;;;; MISC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (fset 'yes-or-no-p 'y-or-n-p)
+  ;; shell scripts
+  (setq-default sh-basic-offset 2)
+  (setq-default sh-indentation 2)
+
+  ;; No need for ~ files when editing
+  (setq create-lockfiles nil)
+
+  ;;;;;;;;;;;;;;;;;;; SHORTCUTS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ; Org agenda
+  (global-set-key (kbd "C-q") 'org-agenda)
+
+  ;; Neotree toggle
+  (global-set-key (kbd "C-c n") 'neotree-toggle)
+
+  ;;windmove
+  (global-set-key (kbd "C-c <left>")  'windmove-left)
+  (global-set-key (kbd "C-c <right>") 'windmove-right)
+  (global-set-key (kbd "C-c <up>")    'windmove-up)
+  (global-set-key (kbd "C-c <down>")  'windmove-down)
+
+  ;; Projectile Shortcuts
+  ;; This gives us a sublime like shortcut to open a file
+  ;; we can add the directory name along with the filename
+  (global-set-key (kbd "C-p")  'projectile-find-file)
+  (global-set-key (kbd "C-f") 'helm-projectile-grep)
+
+  ;; Steve Yegge's idea to use replace M-x with C-x C-m
+  (global-set-key "\C-x\C-m" 'helm-M-x)
+  (global-set-key "\C-c\C-m" 'helm-M-x)
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;; UI ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (setq mac-command-modifier 'control)
+  (which-key-mode)
+  (menu-bar-mode -1)
+  
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -416,10 +500,10 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (solarized-theme yapfify yaml-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toml-mode toc-org sublimity spaceline smeargle restart-emacs rainbow-delimiters racer pyvenv pytest pyenv-mode py-isort popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-journal org-download org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump deft define-word cython-mode csv-mode company-statistics company-anaconda column-enforce-mode clean-aindent-mode cargo auto-yasnippet auto-highlight-symbol auto-compile atom-one-dark-theme aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (smex unfill smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy evil-magit magit transient git-commit with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete spinner evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state iedit evil-exchange evil-ediff evil-args evil-anzu anzu evil undo-tree adaptive-wrap ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smartparens restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile projectile pkg-info epl helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-unimpaired evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-escape goto-chg eval-sexp-fu elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:foreground "#ABB2BF" :background "#282C34")))))
